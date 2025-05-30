@@ -4,23 +4,23 @@ import java.util.Random;
 public class Smartphone extends Prodotto {
     
     // Attributi
-    protected String memoriaRam;
+    protected int memoriaRam;
     protected BigDecimal codiceIMEI;
 
     // 1° Costruttore
-    public Smartphone(int codice, String nome, String marca, BigDecimal prezzo, BigDecimal iva) {
+    public Smartphone(int codice, String nome, String marca, BigDecimal prezzo, BigDecimal iva, int memoriaRam) {
         super(codice, nome, marca, prezzo, iva);
-        this.memoriaRam = generatoreMemoriaRam();
+        this.memoriaRam = memoriaRam;
         this.codiceIMEI = generatoreCodiceIMEI();
     }
 
     // metodi privati
-    protected static String generatoreMemoriaRam() {
-        int[] arrayMemoria = new int[] {2, 3, 4, 8, 12, 16};
-        Random generator = new Random();
-        int randomIndex = generator.nextInt(arrayMemoria.length);
-        return arrayMemoria[randomIndex] + " GB";
-    }
+    // protected static String generatoreMemoriaRam() {
+    //     int[] arrayMemoria = new int[] {2, 3, 4, 8, 12, 16};
+    //     Random generator = new Random();
+    //     int randomIndex = generator.nextInt(arrayMemoria.length);
+    //     return arrayMemoria[randomIndex] + " GB";
+    // }
 
     private BigDecimal generatoreCodiceIMEI() {
     Random rand = new Random();
@@ -36,11 +36,11 @@ public class Smartphone extends Prodotto {
 
     // Metodi pubblici
     // Getters e Setters
-    public String getMemoriaRam() {
+    public int getMemoriaRam() {
         return memoriaRam;
     }
 
-    public void setMemoriaRam(String memoriaRam) {
+    public void setMemoriaRam(int memoriaRam) {
         this.memoriaRam = memoriaRam;
     }
 
@@ -52,8 +52,21 @@ public class Smartphone extends Prodotto {
         this.codiceIMEI = codiceIMEI;
     }
 
+    // OVERRIDE
+    @Override
+    public BigDecimal calcolaPrezzoFedelta() {
+        // Determina la percentuale di sconto in base alla memoria
+        BigDecimal percentualeSconto = (memoriaRam < 32) ? new BigDecimal("0.05") : new BigDecimal("0.02");
+            return calcolaPrezzoScontato(true, percentualeSconto);
+    }
+
     @Override
     public String toString() {
-	return super.toString() + "\nCodice IMEI: " + getCodiceIMEI() + "\nGiga: " + getMemoriaRam();
+    String base = super.toString(true);
+        String scontoInfo = (memoriaRam < 32) ? "(5%)" : "(2%)";
+        return base.replace("(2%)", scontoInfo) + 
+               "\nCodice IMEI: " + codiceIMEI + 
+               "\nRAM: " + memoriaRam + " GB" +
+               "\nTipo sconto applicato: " + scontoInfo;
     }
 }

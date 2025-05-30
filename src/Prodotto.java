@@ -45,14 +45,21 @@ public class Prodotto {
     return null;
     }
 
-        public BigDecimal generatorePrezzoFidaty(BigDecimal prezzo, BigDecimal iva) {
-            if (prezzo != null && iva != null) {
-            // Applica lo sconto del 2% al prezzo base
-            BigDecimal prezzoScontato = prezzo.subtract(prezzo.multiply(new BigDecimal("0.02")));
-                return prezzoScontato.add(prezzoScontato.multiply(iva)).setScale(2, RoundingMode.DOWN);
-            }
-        return null;
+    // Metodo per calcolare il prezzo scontato generico
+    public BigDecimal calcolaPrezzoScontato(boolean applicaScontoFedelta, BigDecimal percentualeSconto) {
+        if (prezzo == null || iva == null) return null;
+        
+        BigDecimal prezzoBase = applicaScontoFedelta ? 
+                            prezzo.subtract(prezzo.multiply(percentualeSconto)) : 
+                            prezzo;
+        
+        return prezzoBase.add(prezzoBase.multiply(iva)).setScale(2, RoundingMode.DOWN);
     }
+
+    // Metodo per calcolare il prezzo scontato del 2%
+    public BigDecimal calcolaPrezzoFedelta() {
+    return calcolaPrezzoScontato(true, new BigDecimal("0.02")); // Richiama il metodo generico
+}
 
     // Getters e Setters
     public int getCodice() {
@@ -90,12 +97,20 @@ public class Prodotto {
     public void setIva(BigDecimal iva) {
         this.iva = iva;
     }
+    
     @Override
     public String toString() {
-	if(nome != null) {
-		// return "\n" +"Articolo: " + codice + " - " + nome + "\nPrezzo: " + generatorePrezzoFinale() + " euro";
-        	return "\n" +"Articolo: " + codice + " - " + nome + "\nPrezzo: " + prezzo.add(prezzo.multiply(iva)).setScale(2, RoundingMode.DOWN) + " euro";
-	}
-	return null;
-}
+    return toString(false); // Default: mostra prezzo normale
+    }
+    public String toString(boolean haTesseraFidaty) {
+        if(nome != null) {
+            String baseString = "Articolo: " + codice + " - " + nome;
+            if (haTesseraFidaty) {
+                return baseString + "\nPrezzo Fedelta' (2%): " + calcolaPrezzoFedelta() + " euro";
+            } else {
+                return baseString + "\nPrezzo: " + prezzo.add(prezzo.multiply(iva)).setScale(2, RoundingMode.DOWN)+ " euro";
+            }
+        }
+        return null;
+    }
 }

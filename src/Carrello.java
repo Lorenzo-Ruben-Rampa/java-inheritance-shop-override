@@ -6,6 +6,11 @@ public class Carrello {
         Prodotto [] products = new Prodotto[1];
         Scanner input = new Scanner(System.in);
 
+        // Aggiungi la domanda per la tessera fedeltà
+        System.out.println("\nIl cliente ha la tessera Fidaty? (true/false): ");
+        boolean haTesseraFidaty = input.nextBoolean();
+        input.nextLine(); // Consuma il newline
+
         for (int i = 0; i < products.length; i++) {
             System.out.println("Inserisci il codice del prodotto: ");
             int codice = input.nextInt();
@@ -34,8 +39,10 @@ public class Carrello {
                 break;
 
             case "smartphone":
-                Smartphone smartphone = new Smartphone(codice, nome, marca, prezzo, new BigDecimal("0.22"));
-                input.nextLine();
+                System.out.println("Inserisci la memoria RAM del telefono (es. 4 GB): ");
+                int memoriaRam = input.nextInt();
+                input.nextLine(); 
+                Smartphone smartphone = new Smartphone(codice, nome, marca, prezzo, new BigDecimal("0.22"), memoriaRam);
                 products[i] = smartphone;
                 break;
      
@@ -57,8 +64,17 @@ public class Carrello {
         System.out.println("Ecco il tuo Carrello: ");
 
         for (int i = 0; i < products.length; i++) {
-            System.out.print(products[i]);
+            if (products[i] != null) {
+                    if (haTesseraFidaty) {
+                        // Se ha la tessera, mostra il prezzo scontato
+                        System.out.println(products[i].toString()); // toString() già mostra entrambi i prezzi
+                        // Oppure in alternativa:
+                        System.out.println("Prezzo scontato (2%): " +  products[i].calcolaPrezzoScontato(true, new BigDecimal("0.02")) + " euro");
+                    } else {
+                        // Se non ha la tessera, mostra solo il prezzo normale
+                        System.out.println(products[i].toString());
+                    }
+            }
         }
     }
 }
-
