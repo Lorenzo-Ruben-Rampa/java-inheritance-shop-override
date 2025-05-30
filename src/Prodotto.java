@@ -11,7 +11,7 @@ public class Prodotto {
 
     // Costruttore della classe Prodotto
     public Prodotto(int codice, String nome, String marca, BigDecimal prezzo, BigDecimal iva) {
-        this.codice = generatoreCodice();
+        this.codice = codice;
         this.nome = nome;
         this.marca = marca;
         this.prezzo = prezzo;
@@ -43,6 +43,15 @@ public class Prodotto {
             return prezzo.add(prezzo.multiply(iva)).setScale(2, RoundingMode.DOWN);
         }   
     return null;
+    }
+
+        public BigDecimal generatorePrezzoFidaty(BigDecimal prezzo, BigDecimal iva) {
+            if (prezzo != null && iva != null) {
+            // Applica lo sconto del 2% al prezzo base
+            BigDecimal prezzoScontato = prezzo.subtract(prezzo.multiply(new BigDecimal("0.02")));
+                return prezzoScontato.add(prezzoScontato.multiply(iva)).setScale(2, RoundingMode.DOWN);
+            }
+        return null;
     }
 
     // Getters e Setters
@@ -84,7 +93,8 @@ public class Prodotto {
     @Override
     public String toString() {
 	if(nome != null) {
-		return "\n" +"Articolo: " + codice + " - " + nome + "\nPrezzo: " + generatorePrezzoFinale() + " euro";
+		// return "\n" +"Articolo: " + codice + " - " + nome + "\nPrezzo: " + generatorePrezzoFinale() + " euro";
+        	return "\n" +"Articolo: " + codice + " - " + nome + "\nPrezzo: " + prezzo.add(prezzo.multiply(iva)).setScale(2, RoundingMode.DOWN) + " euro";
 	}
 	return null;
 }
